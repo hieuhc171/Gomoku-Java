@@ -53,40 +53,60 @@ public class GameOverChecking {
     public static int max_cross(int[][] position, boolean player1Turn) {
         int n = 15;
         int player = (player1Turn ? 1 : 2);
-        int[][] main_cross = new int[n][n];
-        int[][] sub_cross = new int[n][n];
+        int[][] top_left = new int[n][n];
+        int[][] bot_left = new int[n][n];
+        int[][] top_right = new int[n][n];
+        int[][] bot_right = new int[n][n];
         for(int i = 0; i < n; i++) {
-            main_cross[i][0] = (position[i][0] == player ? 1 : 0);
-            main_cross[0][i] = (position[0][i] == player ? 1 : 0);
+            top_left[i][0] = (position[i][0] == player ? 1 : 0);
+            top_left[0][i] = (position[0][i] == player ? 1 : 0);
 
-            sub_cross[i][n-1] = (position[i][n-1] == player ? 1 : 0);
-            sub_cross[n-1][i] = (position[n-1][i] == player ? 1 : 0);
+            bot_left[i][0] = (position[i][0] == player ? 1 : 0);
+            bot_left[n-1][i] = (position[n-1][i] == player ? 1 : 0);
+
+            top_right[0][i] = (position[0][i] == player ? 1 : 0);
+            top_right[i][n-1] = (position[i][n-1] == player ? 1 : 0);
+
+            bot_right[i][n-1] = (position[i][n-1] == player ? 1 : 0);
+            bot_right[n-1][i] = (position[n-1][i] == player ? 1 : 0);
+
         }
         
         int max_length = 0;
         for(int i = 1; i < n; i++) {
             for(int j = 1; j < n; j++) {
                 if(position[i][j] == player) {
-                    main_cross[i][j] = main_cross[i-1][j-1] + 1;
+                    top_left[i][j] = top_left[i-1][j-1] + 1;
                 }
-                else main_cross[i][j] = 0;
+                else top_left[i][j] = 0;
+
+                if(position[j][i] == player) {
+                    bot_left[j][i] = bot_left[j+1][i-1] + 1;
+                }
+                else bot_left[j][i] = 0;
 
                 j = n - 1 - j;
                 if(position[j][i] == player) {
-                    sub_cross[j][i] = sub_cross[j+1][i+1] + 1;
+                    bot_right[j][i] = bot_right[j+1][i+1] + 1;
                 }
-                else sub_cross[j][i] = 0;
+                else bot_right[j][i] = 0;
+                
+                if(position[i][j] == player) {
+                    top_right[i][j] = top_right[i-1][j+1] + 1;
+                }
+                else top_right[i][j] = 0;
 
                 j = n - 1 - j;
             }
         }      
         for(int i = 0; i < n; i++) {
             for(int j = 0; j < n; j++) {
-                int value = Math.max(main_cross[i][j], sub_cross[i][j]);
+                int value = Math.max(Math.max(top_left[i][j], bot_right[i][j]), Math.max(top_right[i][j], bot_left[i][j]));
                 if(value > max_length) max_length = value;
             }
         }
         return max_length; 
     }
 
+    
 }

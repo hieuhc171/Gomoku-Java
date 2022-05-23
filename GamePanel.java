@@ -7,25 +7,17 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-// class Point {
-//     public int x, y;
+public class GamePanel extends JPanel implements Runnable, MouseListener {
 
-//     Point(int x, int y) {
-//         this.x = x;
-//         this.y = y;
-//     }
-// }
-
-public class GamePanel extends JPanel implements Runnable, MouseListener, MouseWheelListener {
-
-    public static final int WIDTH = 720;            //  
+    public static final int WIDTH = 720 + 120;            //  
     public static final int HEIGHT = 720;
     
     private BufferedImage image;                         //
@@ -39,18 +31,15 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseW
 
     private int x, y;           // Vị trí click chuột 
 
-    private int[][] position;                   // Lưu vị trí các quân 2 bên đã ăn
+    private int[][] position;
 
     private boolean player1Turn;
 
     private int player1Wins;
 
-    // private boolean left, right, up, down;      // Mouse sensing
+    private BufferedImage[] player1, player2;
 
-    // private Point top_left, top_right, bot_left, bot_right;
-
-    // private int horizontal;                       // Mouse Wheel sensing
-    // private int vertical;
+    // private List<Integer> possibleMoves;
 
     public GamePanel() {
         super();
@@ -66,7 +55,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseW
             thread.start();
         }
         addMouseListener(this);
-        addMouseWheelListener(this);
     }
 
     public void run() {
@@ -113,107 +101,94 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseW
         player1Turn = true;
         player1Wins = 0;
 
+        player1 = new BufferedImage[1];
+        player2 = new BufferedImage[1];
+        try {
+            player1[0] = ImageIO.read(new File("Caro/Material/X.png"));
+            player2[0] = ImageIO.read(new File("Caro/Material/O.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // possibleMoves = new ArrayList<>();
     }
 
-    private boolean gameOver() {
-        
-        // int left = max_length(-1, 0, player1Turn);
-        // int right = max_length(1, 0, player1Turn);
-        // int up = max_length(0, -1, player1Turn);
-        // int down = max_length(0, 1, player1Turn);
-        // int top_left = max_length(-1, -1, player1Turn);
-        // int top_right = max_length(1, -1, player1Turn);
-        // int bot_left = max_length(-1, 1, player1Turn);
-        // int bot_right = max_length(1, 1, player1Turn);
-
-        // int[] max = {left, right, up, down, top_left, top_right, bot_left, bot_right};
-        // int answer = left;
-        // for(int i = 1; i < 8; i++) {
-        //     if(answer < max[i]) answer = max[i];
-        // }
-        // return answer == 4;
-
+    private boolean gameOver(int[][] position, boolean player1Turn) {
         int answer = Math.max(GameOverChecking.max_straight(position, player1Turn), GameOverChecking.max_cross(position, player1Turn));
         return answer == 5;
-
     }
 
     private void update() {
-        
-        // if(horizontal > 0) {
-        //     top_left.x--;
-        //     bot_left.x--;
-        //     top_right.x--;
-        //     bot_right.x--;
-        // }
-        // if(horizontal < 0) {
-        //     top_right.x++;
-        //     bot_right.x++;
-        //     top_left.x++;
-        //     bot_left.x++;
-        // }
-        // if(vertical > 0) {
-        //     top_left.y--;
-        //     bot_left.y--;
-        //     top_right.y--;
-        //     bot_right.y--;
-        // }
-        // if(vertical < 0) {
-        //     top_left.y++;
-        //     bot_left.y++;
-        //     top_right.y++;
-        //     bot_right.y++;
-        // }
 
-        if(player1Wins != 0) {
-            running = false;
+        if(x >= 15 && x < 18 && y == 7) {
+            init();
         }
 
-        if(x >= 0 && y >= 0 && x < 15 && y < 15 && position[y][x] == 0) {
-            if(player1Turn) {
-                position[y][x] = 1;
+        if(!gameOver(position, !player1Turn)) {
+            // possibleMoves = Minimax.possibleMoves(position);
+
+            if(x >= 0 && y >= 0 && x < 15 && y < 15 && position[y][x] == 0) {
+                if(player1Turn) {
+                    position[y][x] = 1;
+                }
+                else {
+                    position[y][x] = 2;
+                }
+                if(gameOver(position, player1Turn)) {
+                    player1Wins = (player1Turn ? 1 : 2);
+                }
+                player1Turn = !player1Turn;
             }
-            else {
-                position[y][x] = 2;
-            }
-            if(gameOver()) {
-                player1Wins = (player1Turn ? 1 : 2);
-            }
-            player1Turn = !player1Turn;
         }
-        
     }
 
     private void render() {
+        g.clearRect(0, 0, WIDTH, HEIGHT);
+
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
         g.setColor(Color.BLACK);
-        g.setFont(new Font("Arial", Font.PLAIN, 18));
-        // for(int i = top_left.x; i < top_right.x; i++) {
-        //     for(int j = top_left.y; j < bot_left.y; j++) {
-        //         g.drawRect((j - top_left.y) * 60, (i - top_left.x) * 60, 60, 60);
-        //         if((i - top_left.y) * 10 + (j - top_left.x) == 11) g.drawString(String.valueOf((i - top_left.y) * 10 + (j - top_left.x)), (j - top_left.y) * 60 + 15, (i - top_left.x) * 60 + 15);
-        //     }
-        // }
 
         for(int i = 0; i < 15; i++) {
             for(int j = 0; j < 15; j++) {
                 if(position[j][i] == 1) {
-                    g.drawLine(i * 48 + 12, j * 48 + 12, (i+1) * 48 - 12, (j+1) * 48 - 12);
-                    g.drawLine((i+1) * 48 - 12, j * 48 + 12, i * 48 + 12, (j+1) * 48 - 12);
+                    g.drawImage(player1[0], i * 48 + 6, j * 48 + 6, null);
                 }
                 else if(position[j][i] == 2) {
-                    g.drawOval(i * 48 + 12, j * 48 + 12, 24, 24);
+                    g.drawImage(player2[0], i * 48 + 6, j * 48 + 6, null);
                 }
                 g.drawRect(i * 48, j * 48, 48, 48);
             }
         }
 
+        g.setFont(new Font("Arial", Font.TYPE1_FONT, 16));
         if(player1Wins != 0) {
-            g.drawString("Player " + String.valueOf(player1Wins) + " wins !", 300, 300);
+            g.drawString("Player " + String.valueOf(player1Wins) + " wins !", WIDTH - 116, 30);
+            if(!player1Turn) {
+                g.drawImage(player1[0], WIDTH - 80, 40, null);
+            }
+            else g.drawImage(player2[0], WIDTH - 80, 40, null);
         }
+        else {
+            g.drawString("Player " + String.valueOf(player1Turn ? 1 : 2) + "'s turn", WIDTH - 116, 30);
+            if(player1Turn) {
+                g.drawImage(player1[0], WIDTH - 80, 40, null);
+            }
+            else g.drawImage(player2[0], WIDTH - 80, 40, null);
+        }
+        g.drawRect(WIDTH - 119, 0, 120, 80);
+        g.drawRect(WIDTH - 120, 1, 120, 80);
+        
+        g.drawString("RESTART", WIDTH - 100, HEIGHT / 2 + 8);
+        g.drawRect(WIDTH - 110, HEIGHT / 2 - 20, 100, 40);
 
+        // for(int i = 0; i < possibleMoves.size(); i++) {
+        //     int x = possibleMoves.get(i) / 15;
+        //     int y = possibleMoves.get(i) % 15;
+        //     // System.out.print(x + " " + y);
+        //     g.drawOval(x * 48 + 20, y * 48 + 20, 8, 8);
+        // }
     }
 
     private void draw() {
@@ -226,13 +201,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseW
     public void mouseClicked(MouseEvent e) {
         x = e.getX() / 48;
         y = e.getY() / 48;
-        // System.out.println("------------------------------");
-        // for(int i = 0; i < 15; i++) {
-        //     for(int j = 0; j < 15; j++) {
-        //         System.out.print(position[i][j] + " ");
-        //     }
-        //     System.out.print('\n');
-        // }
+        // System.out.println(x + " " + y);
     }
 
     @Override
@@ -246,26 +215,12 @@ public class GamePanel extends JPanel implements Runnable, MouseListener, MouseW
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        // x = e.getX();
-        // y = e.getY();
-        
+
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         
-    }
-
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        // if(e.isShiftDown()) {
-        //     horizontal = e.getWheelRotation();
-        //     // System.out.println("Hor " + horizontal);
-        // }
-        // else {
-        //     vertical = e.getWheelRotation();
-        //     // System.out.println("Ver " + vertical);
-        // }
     }
 
 }
