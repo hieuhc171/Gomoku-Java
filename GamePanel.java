@@ -124,22 +124,38 @@ public class GamePanel extends JPanel implements Runnable, MouseListener {
             init();
         }
 
-        if(!gameOver(position, !player1Turn)) {
-            // possibleMoves = Minimax.possibleMoves(position);
-
-            if(x >= 0 && y >= 0 && x < 15 && y < 15 && position[y][x] == 0) {
-                if(player1Turn) {
-                    position[y][x] = 1;
-                }
-                else {
-                    position[y][x] = 2;
-                }
-                if(gameOver(position, player1Turn)) {
-                    player1Wins = (player1Turn ? 1 : 2);
-                }
-                player1Turn = !player1Turn;
-            }
+        if(gameOver(position, !player1Turn)) {
+            player1Wins = (player1Turn ? 2 : 1);
+            return;
         }
+
+        if(player1Turn) {
+            if(x >= 0 && y >= 0 && x < 15 && y < 15 && position[y][x] == 0) {
+                // position[y][x] = 1;
+            }
+            else return;
+        }
+        else {
+            int location = Minimax.best_move(position);
+            // position[y][x] = 2;
+            // position[location / 15][location % 15] = 2;
+            x = location % 15;
+            y = location / 15;
+            
+        }
+        if(x < 0 || y < 0) return;
+
+        if(position[y][x] == 0) {
+            if(player1Turn) {
+                position[y][x] = 1;
+            }
+            else {
+                position[y][x] = 2;
+            }
+            player1Turn = !player1Turn;
+        }
+
+            
     }
 
     private void render() {
@@ -159,6 +175,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener {
                     g.drawImage(player2[0], i * 48 + 6, j * 48 + 6, null);
                 }
                 g.drawRect(i * 48, j * 48, 48, 48);
+                // g.drawString(String.valueOf(i + j * 15), i * 48 + 20, j * 48 + 20);
             }
         }
 
