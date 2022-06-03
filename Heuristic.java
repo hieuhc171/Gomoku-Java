@@ -1,3 +1,37 @@
+/* 
+    Hàm đánh giá
+    Ta sẽ đánh giá tình trạng tuỳ theo số combo hiện có của mỗi bên
+    Ví dụ cho các combo:    FiveInRow (5 quân thẳng hàng)
+                            DeadFour (4 quân thẳng hàng, bị chặn 1 đầu)
+                            LiveFour (4 quân thẳng hàng, 2 đầu hở)
+                            DeadThree (3 quân thẳng hàng, bị chặn 1 đầu)
+                            ...
+    Với mỗi combo, tuỳ theo lượt hiện tại đang của ai, sẽ đổi ra số điểm tương ứng
+    Ví dụ:  Trắng có combo DeadFour, và đang trong lượt của Trắng, 
+            Trắng sẽ đc đảm bảo chiến thắng (vì chỉ cần đánh thêm 1 nước là Trắng win)
+    Tuy nhiên, cũng với combo DeadFour, nhg lại là lượt của Đen, 
+    Trắng sẽ chỉ đc cộng 1 phần số điểm (vì Đen chặn 1 cái là xong)
+
+    Ta sẽ đếm số combo hiện có trên 2 đường ngang, dọc và 2 đường chéo, sau đó cộng lại
+
+    Cách tính điểm:
+    - Bị chặn 2 đầu và số quân < 5:                                     0 
+    - 2 chuỗi 5 quân liên tiếp:                                         200,000,000
+    - 5 quân liên tiếp:                                                 100,000,000
+    - 4 quân liên tiếp: + Lượt của mình:                                1,000,000
+                        + Lượt của đối phương:  ko bị chặn 2 đầu:       250,000
+                                                bị chặn 1 đầu:          200
+    - 3 quân liên tiếp: + Ko bị chặn 2 đầu:     lượt của mình:          50,000
+                                                lượt của đối phương:    200
+                        + Bị chặn 1 đầu:        lượt của mình:          10
+                                                lượt của đối phương:    5
+    - 2 quân liên tiếp: + Ko bị chặn 2 đầu:     lượt của mình:          7
+                                                lượt của đối phương:    5
+                        + Bị chặn 1 đầu:                                3
+    - 1 quân ko bị chặn:                                                1
+    
+*/
+
 package Caro;
 
 public class Heuristic {

@@ -1,22 +1,35 @@
-// Kiểm tra game đã kết thúc hay chưa (Kiểm tra đã có 5 con thẳng hàng nào hay ko)
+/* 
+    Kiểm tra game đã kết thúc hay chưa (Kiểm tra đã có 5 con thẳng hàng nào hay ko)
+    Thuật toán:
+    - Tạo ra 8 mảng 2 chiều, tương ứng với 8 hướng cần xét
+    - Gọi bảng gốc là initial
+    - Xét vị trí initial[i][j]
+        + Nếu initial[i][j] = 0 thì vị trí [i][j] tương ứng trg 8 bảng sẽ = 0
+        + Nếu initial[i][j] != 0 thì sẽ = vị trí trước đó + 1
+    - Tính xong 8 bảng, ta kiểm tra xem có vị trí nào trg 8 bảng có giá trị = 5 ko
+*/
 
 package Caro;
 
 public class GameOverChecking {
     private static int n = 15;
     
-    // Kiểm tra đường dọc và ngang bằng index cộng dồn
+    // Kiểm tra đường dọc và ngang
     private static int[] horizoncalAndVerticalChecking(int[][] position, boolean player1Turn) {
 
         int[] answer = new int[3];
         for(int i = 0; i < 3; i++) answer[i] = 0;
         int player = (player1Turn ? 1 : 2);
 
+        // Khởi tạo các bảng
         int[][] left = new int[n][n];
         int[][] right = new int[n][n];
         int[][] up = new int[n][n];
         int[][] down = new int[n][n];
 
+        // Tính giá trị của các ô bắt đầu trong mỗi bảng.
+        // Ví dụ, bảng left chạy từ phải sang trái, 
+        // thì ta tính giá trị các ô tận cùng bên phải trước
         for(int i = 0; i < n; i++) {
             left[i][n-1] = (position[i][n-1] == player ? 1 : 0);
             right[i][0] = (position[i][0] == player ? 1 : 0);

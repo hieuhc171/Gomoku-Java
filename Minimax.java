@@ -1,3 +1,14 @@
+/* 
+    Thuật toán Minimax - cắt tỉa Alpha Beta
+
+    Chức năng các hàm:
+    - possibleMoves() : trả về danh sách các vị trí, tương ứng với các nước đi khả dĩ
+    (vì dùng vét cạn nên ta chỉ xét các nước đi có quân bên cạnh mà thôi)
+    - heuristic() : trả về điểm của bot so với player
+    - minimax() : chạy thuật toán Minimax, kèm cắt tỉa alpha-beta
+    - best_move() : lựa chọn trong các nước đi khả dĩ, nước nào có kết quả khả quan nhất
+*/
+
 package Caro;
 
 import java.util.ArrayList;

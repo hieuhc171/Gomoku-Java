@@ -1,3 +1,19 @@
+/*
+    GUI - Graphic User Interface
+    
+    Chức năng của các hàm:
+
+    run() (thực thi interface Runnable): thực thi game
+    init(): khởi tạo các biến, hình ảnh
+    update(): cập nhật tình trạng của game theo thời gian thực (ô nào đã đánh, ô nào còn trống)
+    
+    render(): vẽ lên panel ẩn (hiểu dễ hơn là bản phác thảo, chưa đc publish)
+    draw(): vẽ chính thức, publish lên cửa sổ ứng dụng
+
+    mouseSensing() (thực thi interface MouseListener): nhận diện các thao tác của con trỏ chuột
+
+*/
+
 package Caro;
 import java.awt.Color;
 import java.awt.Dimension;
