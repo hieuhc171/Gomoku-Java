@@ -7,27 +7,54 @@ public class Minimax {
 
     private static int n = 15;
 	
-    private static List<Integer> possibleMoves(int[][] position) {
-        List<Integer> possibleMoves = new ArrayList<>();
+    private static List<int[]> possibleMoves(int[][] position) {
+        List<int[]> possibleMoves = new ArrayList<>();
         for(int i = 0; i < n; i++) {
             for(int j = 0; j < n; j++) {
-                if(position[i][j] != 0) {
-                    if(i > 0)
-                        if(position[i-1][j] == 0) possibleMoves.add((i-1) * n + j);
-                    if(j > 0)
-                        if(position[i][j-1] == 0) possibleMoves.add(i * n + (j-1));
-                    if(i > 0 && j > 0)
-                        if(position[i-1][j-1] == 0) possibleMoves.add((i-1) * n + (j-1));
-                    if(j < n-1)
-                        if(position[i][j+1] == 0) possibleMoves.add(i * n + (j+1));
-                    if(i < n-1)
-                        if(position[i+1][j] == 0) possibleMoves.add((i+1) * n + j);
-                    if(i > 0 && j < n-1)
-                        if(position[i-1][j+1] == 0) possibleMoves.add((i-1) * n + (j+1));
-                    if(i < n-1 && j > 0)
-                        if(position[i+1][j-1] == 0) possibleMoves.add((i+1) * n + (j-1));
-                    if(i < n-1 && j < n-1)
-                        if(position[i+1][j+1] == 0) possibleMoves.add((i+1) * n + (j+1));
+                if(position[i][j] > 0) continue;
+
+                if(i > 0) {
+                    if(j > 0) {
+                        if(position[i-1][j-1] > 0 || position[i][j-1] > 0) {
+                            int[] move = {i, j};
+                            possibleMoves.add(move);
+                            continue;
+                        }
+                    }
+                    if(j < n-1) {
+                        if(position[i-1][j+1] > 0 || position[i][j+1] > 0) {
+                            int[] move = {i, j};
+                            possibleMoves.add(move);
+                            continue;
+                        }
+                    }
+                    if(position[i-1][j] > 0) {
+                        int[] move = {i, j};
+                        possibleMoves.add(move);
+                        continue;
+                    }
+                }
+
+                if(i < n-1) {
+                    if(j > 0) {
+                        if(position[i+1][j-1] > 0 || position[i][j-1] > 0) {
+                            int[] move = {i, j};
+                            possibleMoves.add(move);
+                            continue;
+                        }
+                    }
+                    if(j < n-1) {
+                        if(position[i+1][j+1] > 0 || position[i][j+1] > 0) {
+                            int[] move = {i, j};
+                            possibleMoves.add(move);
+                            continue;
+                        }
+                    }
+                    if(position[i+1][j] > 0) {
+                        int[] move = {i, j};
+                        possibleMoves.add(move);
+                        continue;
+                    }
                 }
             }
         }
@@ -44,74 +71,63 @@ public class Minimax {
         return botScore / playerScore;
     }
 
-    private static List<int[][]> child(int[][] position, boolean player1Turn) {
-        List<int[][]> child = new ArrayList<>();
-        int player = player1Turn ? 1 : 2;
-        for(int i = 0; i < possibleMoves(position).size(); i++) {
-            int pos = possibleMoves(position).get(i);
-            int[][] current_state = new int[n][n];
-            for(int j = 0; j < n; j++) 
-                for(int k = 0; k < n; k++)
-                    current_state[j][k] = position[j][k];
-            current_state[pos / n][pos % n] = player;
-            child.add(current_state);
-        }
-
-        return child;
-    }
-
     private static double minimax(int[][] position, int depth, double alpha, double beta, boolean player1Turn) {
-        if(depth == 0) {
-            return heuristic(position, player1Turn);
+        if(depth == 0 || possibleMoves(position).size() == 0) {
+            return heuristic(position, !player1Turn);
         }
         if(player1Turn) {
-            double maxValue = -10000000;
-            for(int i = 0; i < child(position, player1Turn).size(); i++) {
-                double value = minimax(child(position, player1Turn).get(i), depth-1, alpha, beta, false);
+            double maxValue = -1;
+            for(int i = 0; i < possibleMoves(position).size(); i++) {
+                int[][] current_board = new int[n][n];
+                for(int j = 0; j < n; j++)
+                    for(int k = 0; k < n; k++)
+                        current_board[j][k] = position[j][k];
+
+                current_board[possibleMoves(position).get(i)[0]][possibleMoves(position).get(i)[1]] = 1;
+                double value = minimax(current_board, depth-1, alpha, beta, false);
+                alpha = Math.max(alpha, value);
+                if(value >= beta) return value;
                 maxValue = Math.max(value, maxValue);
-                if(maxValue >= beta) break;
-                alpha = Math.max(alpha, maxValue);
                 
             }
-            // System.out.print('\n');
             return maxValue;
         }
         else {
             double minValue = 10000000;
-            for(int i = 0; i < child(position, player1Turn).size(); i++) {
-                double value = minimax(child(position, player1Turn).get(i), depth-1, alpha, beta, true);
+            for(int i = 0; i < possibleMoves(position).size(); i++) {
+                int[][] current_board = new int[n][n];
+                for(int j = 0; j < n; j++)
+                    for(int k = 0; k < n; k++)
+                        current_board[j][k] = position[j][k];
+
+                current_board[possibleMoves(position).get(i)[0]][possibleMoves(position).get(i)[1]] = 2;
+                double value = minimax(current_board, depth-1, alpha, beta, true);
+                beta = Math.min(beta, value);
+                if(value <= alpha) return value;
                 minValue = Math.min(value, minValue);
-                if(minValue <= alpha) break;
-                beta = Math.min(beta, minValue);
+    
             }
             return minValue;
         }
     }
 
-    public static int best_move(int[][] position) {
-        int location = 0;
-        double value = -1000000000;
+    public static int[] best_move(int[][] position) {
+        int[] location = new int[2];
+        double value = -1;
 
-        for(int i = 0; i < child(position, false).size(); i++) {
-            // System.out.println(possibleMoves(position).get(i) + " " + minimax(child(position, false).get(i), 1, false));
-            if(minimax(child(position, false).get(i), 1, -10000000, 10000000, false) >= value) {
-                value = minimax(child(position, false).get(i), 1, -10000000, 10000000, false);
-                // System.out.print(value + " ");
+        for(int i = 0; i < possibleMoves(position).size(); i++) {
+            int[][] current_board = new int[n][n];
+            for(int j = 0; j < n; j++)
+                for(int k = 0; k < n; k++)
+                    current_board[j][k] = position[j][k];
+                    
+            current_board[possibleMoves(position).get(i)[0]][possibleMoves(position).get(i)[1]] = 2;
+            
+            if(minimax(current_board, 2, -1, Heuristic.winScore, false) >= value) {
+                value = minimax(current_board, 2, -1, Heuristic.winScore, false);
                 location = possibleMoves(position).get(i);
             }
         }
-        // System.out.println("------------");
         return location;
     }
-
-    // public static void main(String[] args) {
-    //     int[][] position = new int[15][15];
-    //     for(int i = 0; i < n; i++) {
-    //         for(int j = 0; j < n; j++) {
-    //             position[i][j] = 0;
-    //         }
-    //     }
-    //     position[3][3] = 2;
-
-    // } 
 }

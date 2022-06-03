@@ -9,8 +9,6 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -110,12 +108,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener {
             e.printStackTrace();
         }
 
-        // possibleMoves = new ArrayList<>();
-    }
-
-    private boolean gameOver(int[][] position, boolean player1Turn) {
-        int answer = Math.max(GameOverChecking.max_straight(position, player1Turn), GameOverChecking.max_cross(position, player1Turn));
-        return answer == 5;
     }
 
     private void update() {
@@ -124,7 +116,7 @@ public class GamePanel extends JPanel implements Runnable, MouseListener {
             init();
         }
 
-        if(gameOver(position, !player1Turn)) {
+        if(GameOverChecking.gameOver(position, !player1Turn)) {
             player1Wins = (player1Turn ? 2 : 1);
             return;
         }
@@ -136,11 +128,10 @@ public class GamePanel extends JPanel implements Runnable, MouseListener {
             else return;
         }
         else {
-            int location = Minimax.best_move(position);
+            y = Minimax.best_move(position)[0];
+            x = Minimax.best_move(position)[1];
             // position[y][x] = 2;
             // position[location / 15][location % 15] = 2;
-            x = location % 15;
-            y = location / 15;
             
         }
         if(x < 0 || y < 0) return;
@@ -154,7 +145,6 @@ public class GamePanel extends JPanel implements Runnable, MouseListener {
             }
             player1Turn = !player1Turn;
         }
-
             
     }
 

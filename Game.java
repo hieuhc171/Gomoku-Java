@@ -1,3 +1,5 @@
+// Khởi tạo cửa sổ - màn hình chơi game
+
 package Caro;
 
 import javax.swing.JFrame;
