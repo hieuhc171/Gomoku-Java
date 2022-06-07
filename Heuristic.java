@@ -172,7 +172,7 @@ public class Heuristic {
             blocks = 2;
         }
 
-        for(int k = 1-n; k < n; k++) {
+        for(int k = 2-n; k < n-1; k++) {
             int iStart = Math.max(0, k);
             int iEnd = Math.min(n+k-1, n-1);
             for(int i = iStart; i <= iEnd; i++) {
