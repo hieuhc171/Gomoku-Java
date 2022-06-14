@@ -1,0 +1,27 @@
+case 1:
+    11111  :  +1000000
+
+case 2:
+    1111   :  +100000
+    
+case 3:
+    11101  :  +10000
+    11011
+    10111
+
+case 4:
+    111    :  +1000
+
+case 5:
+    1101   :  +100
+    1011
+    10101
+    11001
+    10011
+
+case 6:
+    11     :  +10
+
+Các case đằng trước, bị chặn 1 đầu, hoặc trong lượt địch
+sẽ được cộng điểm = case sau (ví dụ case 2 bị chặn 1 đầu thì được điểm bằng case 3)
+

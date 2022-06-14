@@ -143,5 +143,19 @@ public class GameOverChecking {
         int answer = Math.max(horizoncalAndVerticalChecking(position, player1Turn)[0], diagonalChecking(position, player1Turn)[0]);
         return answer == 5;
     }
-    
+
+    // public static int[] getPosition(int[][] position, boolean player1Turn) {
+    //     int[] location = new int[3];
+    //     location = horizoncalAndVerticalChecking(position, player1Turn)[0] > diagonalChecking(position, player1Turn)[0] ?
+    //                horizoncalAndVerticalChecking(position, player1Turn) : diagonalChecking(position, player1Turn);
+
+    //     for(int i = -1; i <= 1; i++) {
+    //         for(int j = -1; j <= 1; j++) {
+
+    //         }
+    //     }
+
+    //     return location;
+    // }
+
 }

@@ -22,11 +22,7 @@ public class Heuristic {
     public static final int winScore = 100000000;
 
     public static int getScore(int[][] position, boolean countingPlayer, boolean player1Turn) {
-        
-        int[][] currentState = new int[n][n];
-        for(int i = 0; i < n; i++) 
-            for(int j = 0; j < n; j++) currentState[i][j] = position[i][j];
-
+   
         return evaluateHorizontal(position, countingPlayer, player1Turn) +
                 evaluateVertical(position, countingPlayer, player1Turn) +
                 evaluateDiagonal(position, countingPlayer, player1Turn);
@@ -140,7 +136,7 @@ public class Heuristic {
         int blocks = 2;
         int score = 0;
 
-        for(int k = 1; k < 2 * (n-1); k++) {
+        for(int k = 0; k <= 2 * (n-1); k++) {
             int iStart = Math.max(0, k-n+1);
             int iEnd = Math.min(k, n-1);
             for(int i = iStart; i <= iEnd; i++) {
@@ -172,7 +168,7 @@ public class Heuristic {
             blocks = 2;
         }
 
-        for(int k = 2-n; k < n-1; k++) {
+        for(int k = 1-n; k < n; k++) {
             int iStart = Math.max(0, k);
             int iEnd = Math.min(n+k-1, n-1);
             for(int i = iStart; i <= iEnd; i++) {
@@ -222,8 +218,6 @@ public class Heuristic {
                                                 lượt của đối phương:    5
                         + Bị chặn 1 đầu:                                3
     - 1 quân ko bị chặn:                                                1
-
-    * Note: Cần thêm Threat Detecting
     
     */
     private static int scoreExchange(int count, int blocks, boolean currentTurn) {

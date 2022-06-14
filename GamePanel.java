@@ -53,7 +53,13 @@ public class GamePanel extends JPanel implements Runnable, MouseListener {
 
     private BufferedImage[] player1, player2;
 
+    private String[] choices = {"PLAYER VS PLAYER", " PLAYER VS HIEU ", " PLAYER VS HUNG ", "  HIEU VS HUNG  "};
+
     // private List<Integer> possibleMoves;
+
+    private boolean selecting;
+
+    private int choice;
 
     public GamePanel() {
         super();
@@ -112,6 +118,8 @@ public class GamePanel extends JPanel implements Runnable, MouseListener {
             }
         }
 
+        selecting = true;
+
         player1Turn = true;
         player1Wins = 0;
 
@@ -124,94 +132,143 @@ public class GamePanel extends JPanel implements Runnable, MouseListener {
             e.printStackTrace();
         }
 
+        choice = -1;
+
     }
 
     private void update() {
 
-        if(x >= 15 && x < 18 && y == 7) {
-            init();
-        }
-
-        if(GameOverChecking.gameOver(position, !player1Turn)) {
-            player1Wins = (player1Turn ? 2 : 1);
-            return;
-        }
-
-        if(player1Turn) {
-            if(x >= 0 && y >= 0 && x < 15 && y < 15 && position[y][x] == 0) {
-                // position[y][x] = 1;
-            }
-            else return;
-        }
-        else {
-            y = Minimax.best_move(position)[0];
-            x = Minimax.best_move(position)[1];
-            // position[y][x] = 2;
-            // position[location / 15][location % 15] = 2;
-            
-        }
-        if(x < 0 || y < 0) return;
-
-        if(position[y][x] == 0) {
-            if(player1Turn) {
-                position[y][x] = 1;
-            }
+        if(selecting) {
+            if(330 >= x || x >= 514) return;
             else {
-                position[y][x] = 2;
+                if(240 <= y && y <= 280) {
+                    choice = 0;
+                    selecting = false;
+                    return;
+                }
+                else if(310 <= y && y <= 340) {
+                    choice = 1;
+                    selecting = false;
+                    return;
+                }
+                else if(375 <= y && y <= 413) {
+                    choice = 2;
+                    selecting = false;
+                    return;
+                }
+                else if(440 <= y && y <= 475) {
+                    choice = 3;
+                    selecting = false;
+                    return;
+                }
+                else return;
             }
-            player1Turn = !player1Turn;
         }
-            
+
+        else {
+            if(x >= 15 && x < 18 && y == 7) {
+                init();
+            }
+
+            if(GameOverChecking.gameOver(position, !player1Turn)) {
+                player1Wins = (player1Turn ? 2 : 1);
+                return;
+            }
+
+            if(choice == 1 && !player1Turn) {
+                int[] move = Minimax.best_move(position, player1Turn);
+                y = move[0];
+                x = move[1];
+            }
+            else if(choice == 2 && !player1Turn) {
+                int[] move = Minimax2.best_move(position, player1Turn);
+                y = move[0];
+                x = move[1];
+            }
+            else if(choice == 3) {
+                if(player1Turn) {
+                    int[] move = Minimax.best_move(position, player1Turn);
+                    y = move[0];
+                    x = move[1];
+                }
+                else {
+                    int[] move = Minimax2.best_move(position, player1Turn);
+                    y = move[0];
+                    x = move[1];
+                }
+            }
+
+            if(x < 0 || y < 0 || x >= 15 || y >= 15) return;
+
+            if(position[y][x] == 0) {
+                if(player1Turn) {
+                    position[y][x] = 1;
+                }
+                else {
+                    position[y][x] = 2;
+                }
+                player1Turn = !player1Turn;
+            }
+        }                
     }
 
     private void render() {
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
-
-        g.setColor(Color.BLACK);
-
-        for(int i = 0; i < 15; i++) {
-            for(int j = 0; j < 15; j++) {
-                if(position[j][i] == 1) {
-                    g.drawImage(player1[0], i * 48 + 6, j * 48 + 6, null);
-                }
-                else if(position[j][i] == 2) {
-                    g.drawImage(player2[0], i * 48 + 6, j * 48 + 6, null);
-                }
-                g.drawRect(i * 48, j * 48, 48, 48);
-                // g.drawString(String.valueOf(i + j * 15), i * 48 + 20, j * 48 + 20);
+        if(selecting) {
+            g.setColor(new Color(204, 204, 204));
+            g.fillRect(0, 0, WIDTH, HEIGHT);
+            g.setColor(Color.WHITE);
+            g.fillRect(WIDTH/2 - 3 * 48, HEIGHT/2 - 3 * 48, 6 * 48, 6 * 48);
+            
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Calibri", Font.BOLD, 16));
+            for(int i = 0; i < 4; i++) {
+                g.drawRect(WIDTH/2 - 3 * 48 + 40, HEIGHT/2 - 3 * 48 + 20 + i * 67, 6 * 48 - 80, 45);
+                g.drawString(choices[i], WIDTH/2 - 3 * 48 + 77, HEIGHT/2 - 3 * 48 + 50 + i * 67);
             }
         }
-
-        g.setFont(new Font("Arial", Font.TYPE1_FONT, 16));
-        if(player1Wins != 0) {
-            g.drawString("Player " + String.valueOf(player1Wins) + " wins !", WIDTH - 116, 30);
-            if(!player1Turn) {
-                g.drawImage(player1[0], WIDTH - 80, 40, null);
-            }
-            else g.drawImage(player2[0], WIDTH - 80, 40, null);
-        }
+            
         else {
-            g.drawString("Player " + String.valueOf(player1Turn ? 1 : 2) + "'s turn", WIDTH - 116, 30);
-            if(player1Turn) {
-                g.drawImage(player1[0], WIDTH - 80, 40, null);
-            }
-            else g.drawImage(player2[0], WIDTH - 80, 40, null);
-        }
-        g.drawRect(WIDTH - 119, 0, 120, 80);
-        g.drawRect(WIDTH - 120, 1, 120, 80);
-        
-        g.drawString("RESTART", WIDTH - 100, HEIGHT / 2 + 8);
-        g.drawRect(WIDTH - 110, HEIGHT / 2 - 20, 100, 40);
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, WIDTH, HEIGHT);
 
-        // for(int i = 0; i < possibleMoves.size(); i++) {
-        //     int x = possibleMoves.get(i) / 15;
-        //     int y = possibleMoves.get(i) % 15;
-        //     // System.out.print(x + " " + y);
-        //     g.drawOval(x * 48 + 20, y * 48 + 20, 8, 8);
-        // }
+            g.setColor(Color.BLACK);
+
+            for(int i = 0; i < 15; i++) {
+                for(int j = 0; j < 15; j++) {
+                    if(position[j][i] == 1) {
+                        g.drawImage(player1[0], i * 48 + 6, j * 48 + 6, null);
+                    }
+                    else if(position[j][i] == 2) {
+                        g.drawImage(player2[0], i * 48 + 6, j * 48 + 6, null);
+                    }
+                    g.drawRect(i * 48, j * 48, 48, 48);
+                    // g.drawString(String.valueOf(i + j * 15), i * 48 + 20, j * 48 + 20);
+                }
+            }
+
+            g.setFont(new Font("Arial", Font.TYPE1_FONT, 16));
+            if(player1Wins != 0) {
+                g.drawString("Player " + String.valueOf(player1Wins) + " wins !", WIDTH - 116, 30);
+                if(!player1Turn) {
+                    g.drawImage(player1[0], WIDTH - 80, 40, null);
+                }
+                else g.drawImage(player2[0], WIDTH - 80, 40, null);
+            }
+            else {
+                g.drawString("Player " + String.valueOf(player1Turn ? 1 : 2) + "'s turn", WIDTH - 116, 30);
+                if(player1Turn) {
+                    g.drawImage(player1[0], WIDTH - 80, 40, null);
+                }
+                else g.drawImage(player2[0], WIDTH - 80, 40, null);
+            }
+            g.drawRect(WIDTH - 119, 0, 120, 80);
+            g.drawRect(WIDTH - 120, 1, 120, 80);
+            
+            g.drawString("RESTART", WIDTH - 100, HEIGHT / 2 + 8);
+            g.drawRect(WIDTH - 110, HEIGHT / 2 - 20, 100, 40);
+        }
     }
 
     private void draw() {
@@ -222,9 +279,14 @@ public class GamePanel extends JPanel implements Runnable, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        x = e.getX() / 48;
-        y = e.getY() / 48;
-        // System.out.println(x + " " + y);
+        if(!selecting) {
+            x = e.getX() / 48;
+            y = e.getY() / 48;
+        }
+        else {
+            x = e.getX();
+            y = e.getY();
+        }
     }
 
     @Override

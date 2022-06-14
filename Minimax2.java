@@ -14,7 +14,7 @@ package Caro;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Minimax {
+public class Minimax2 {
 
     private static int n = 15;
 	
@@ -74,8 +74,8 @@ public class Minimax {
     
     private static double heuristic(int[][] position, boolean player1Turn) {
         
-        double playerScore = Heuristic.getScore(position, true, player1Turn);
-        double botScore = Heuristic.getScore(position, false, player1Turn);
+        double playerScore = Heuristic2.getScore(position, true, player1Turn);
+        double botScore = Heuristic2.getScore(position, false, player1Turn);
 
         if(playerScore == 0) playerScore = 1.0;
 
@@ -122,31 +122,9 @@ public class Minimax {
         }
     }
 
-    public static int[] winning_move(int[][] position, boolean player1Turn) {
-        int[] location = new int[2];
-        
-        for(int i = 0; i < possibleMoves(position).size(); i++) {
-            int[][] current_board = new int[n][n];
-            for(int j = 0; j < n; j++)
-                for(int k = 0; k < n; k++)
-                    current_board[j][k] = position[j][k];
-            
-            current_board[possibleMoves(position).get(i)[0]][possibleMoves(position).get(i)[1]] = player1Turn ? 1 : 2;
-            if(Heuristic.getScore(current_board, false, player1Turn) >= Heuristic.winScore) {
-                location = possibleMoves(position).get(i);
-                return location;
-            }
-        }
-        return null;
-    }
-
     public static int[] best_move(int[][] position, boolean player1Turn) {
         int[] location = new int[2];
         double value = -1;
-
-        if(winning_move(position, player1Turn) != null) {
-            return winning_move(position, player1Turn);
-        }
 
         for(int i = 0; i < possibleMoves(position).size(); i++) {
             int[][] current_board = new int[n][n];
