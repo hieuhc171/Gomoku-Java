@@ -272,6 +272,39 @@ public class Heuristic2 {
         return score;
     }    
 
+    /* 
+        Ví dụ với n = 6:        00 01 02 03 04 05
+                                10 11 12 13 14 15
+                                20 21 22 23 24 25
+                                30 31 32 33 34 35
+                                40 41 42 43 44 45
+                                50 51 52 53 54 55
+        Đường chéo chính:
+            Start
+            ij = 00, 01, 02, 03, 04, 05, 15, 25, 35, 45, 55
+            End
+            ij = 00, 10, 20, 30, 40, 50, 51, 52, 53, 54, 55 
+            Index
+            k  =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10
+            
+            iStart = k - n + 1 for n <= k <= 2(n-1)
+            iStart = 0 for 0 <= k <= n-1
+            iEnd = k for 0 <= k <= n-1
+            iEnd = n-1 for n <= k <= 2(n-1)
+            j = k - i
+
+        Đường chéo phụ:
+            Start
+            ij = 05, 04, 03, 02, 01, 00, 10, 20, 30, 40, 50
+            End
+            ij = 05, 15, 25, 35, 45, 55, 54, 53, 52, 51, 50
+            Index
+            k  = -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5
+
+            iStart = max(0, k)
+            iEnd = min(n+k-1, n-1)
+            j = i-k
+    */
     private static int evaluateDiagonal(int[][] position, boolean countingPlayer, boolean player1Turn) {
         
         int score = 0;
@@ -414,7 +447,7 @@ public class Heuristic2 {
             for(int i = iStart; i <= iEnd; i++) {
                 int j = i-k;
                 
-                if(j+4 < length) {
+                if(i+4 < length) {
 
 /* 11111 */         if(position[i][j] == player && position[i+1][j+1] == player &&
                     position[i+2][j+2] == player && position[i+3][j+3] == player && position[i+4][j+4] == player) {
@@ -468,7 +501,7 @@ public class Heuristic2 {
                     }
                 }
 
-                if(j+3 < length) {
+                if(i+3 < length) {
                     
                     int blocks = 0;
                     if(i == 0 || j == 0) blocks += 1;
@@ -498,7 +531,7 @@ public class Heuristic2 {
                     }   
                 }
 
-                if(j+2 < length) {
+                if(i+2 < length) {
 
                     int blocks = 0;
                     if(i == 0 || j == 0) blocks += 1;
@@ -516,7 +549,7 @@ public class Heuristic2 {
                     }
                 }
 
-                if(j+1 < length) {
+                if(i+1 < length) {
                     
                     int blocks = 0;
                     if(i == 0 || j == 0) blocks += 1;

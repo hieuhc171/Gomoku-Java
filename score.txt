@@ -2,26 +2,28 @@ case 1:
     11111  :  +1000000
 
 case 2:
-    1111   :  +100000
-    
+    1111   :  lượt mình:    +100000
+              lượt địch:    ko bị chặn: +25000
+                            bị chặn: +125
+
 case 3:
-    11101  :  +10000
-    11011
-    10111
+    11101  :  lượt mình:    +10000
+    11011     lượt địch:    ko bị chặn: +250
+    10111                   bị chặn: +125
 
 case 4:
-    111    :  +1000
-
+    111    :  lượt mình:    ko bị chặn: +5000
+                            bị chặn: +125
+              lượt địch:    ko bị chặn: +25
+                            bị chặn: +15
 case 5:
-    1101   :  +100
-    1011
-    10101
+    1101   :  lượt mình:    ko bị chặn: +100
+    1011                    bị chặn: +125
+    10101     lượt địch:    +15
     11001
     10011
 
 case 6:
     11     :  +10
 
-Các case đằng trước, bị chặn 1 đầu, hoặc trong lượt địch
-sẽ được cộng điểm = case sau (ví dụ case 2 bị chặn 1 đầu thì được điểm bằng case 3)
-
+ 
